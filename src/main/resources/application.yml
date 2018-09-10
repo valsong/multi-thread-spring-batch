@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    test:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/val?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=false
+      username: root
+      password: 123456
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 6000
+      timeBetweenEvictionRunsMillis: 6000
+      minEvictableIdleTimeMillis: 30000
+      validataionQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,slf4j
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=3000
+  batch:
+    initialize-schema: ALWAYS  #第一次选择ALWAYS让他自动建表
+
+
