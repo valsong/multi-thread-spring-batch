@@ -23,4 +23,10 @@ public class HelloController {
         jobTrigger.runJob();
         return "hello";
     }
+
+    @RequestMapping("/hello2")
+    public String index2() throws FileNotFoundException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        jobTrigger.runJob2();
+        return "hello";
+    }
 }

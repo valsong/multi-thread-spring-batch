@@ -27,10 +27,10 @@ import java.io.FileNotFoundException;
 public class JobTrigger {
 
     @Autowired
-    public JobBuilderFactory jobBuilderFactory;
+    private JobBuilderFactory jobBuilderFactory;
 
     @Autowired
-    public StepBuilderFactory stepBuilderFactory;
+    private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
     private MyItemWriter myItemWriter;
@@ -47,7 +47,7 @@ public class JobTrigger {
 
 
     @Autowired
-    JobLauncher jobLauncher;
+    private JobLauncher jobLauncher;
 
     @Autowired
     private TaskExecutor taskExecutor;
@@ -100,5 +100,34 @@ public class JobTrigger {
         jobLauncher.run(job, new JobParameters());
 
     }
+
+
+    public void runJob2() throws FileNotFoundException, JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
+        JobFlowBuilder jobFlowBuilder = jobBuilderFactory.get("importUserJob")
+                .incrementer(new RunIdIncrementer())
+                .listener(jobCompletionNotificationListener)
+                .flow(step1);
+
+        for (int i = 0; i < 999; i++) {
+
+            Step step = stepBuilderFactory.get("myStep" + i).listener(new MyStepListener())
+                    .<String, String>chunk(15)
+                    .reader(new MyItemReader())
+                    .processor(myItemProcessor)
+                    .writer(myItemWriter)
+                    .allowStartIfComplete(true)
+                    .taskExecutor(taskExecutor)
+                    .build();
+
+            jobFlowBuilder.next(step);
+
+        }
+
+        Job job = jobFlowBuilder.end().build();
+
+        jobLauncher.run(job, new JobParameters());
+
+    }
+
 
 }
